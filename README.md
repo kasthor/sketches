@@ -13,3 +13,7 @@ Visual experiments using canvas sketch
 ## Sketch 06
 
 ![Sketch-06](https://raw.githubusercontent.com/kasthor/sketches/master/sketches/sketch-06.gif)
+
+## Sketch 07
+
+![Sketch-07](https://raw.githubusercontent.com/kasthor/sketches/master/sketches/sketch-07.gif)
