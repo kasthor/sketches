@@ -33,7 +33,21 @@ const frag = `
     return d;
   }
 
-  float ray_march(vec3 ro, vec3 rd){
+  vec3 normal(vec3 p) {
+    float d = dist(p);
+    
+    vec2 e = vec2(0.01, 0.0);
+
+    vec3 n = d - vec3(
+      dist(p-e.xyy),
+      dist(p-e.yxy),
+      dist(p-e.yyx)
+    );
+
+    return normalize(n);
+  }
+
+  float rayMarch(vec3 ro, vec3 rd){
     float dO = 0.0;
 
     for(int i =0; i < MAX_STEPS; i++ ){
@@ -47,6 +61,27 @@ const frag = `
     return dO;
   }
 
+  float light(vec3 p){
+
+    // light 
+    vec3 lP = vec3( 0, 5, 6 );    
+
+    lP.xz += vec2(sin(time), cos(time)) * 10.0;
+
+    vec3 l = normalize(lP - p);
+    vec3 n = normal(p);
+
+    float dif = clamp(dot(n, l), 0.0, 1.0);
+
+    // Shadow
+    
+    float d = rayMarch(p+n*SURF_DIST*2.0, lP);
+    if(d<length(lP-p)) dif *= 0.1;
+
+    return dif;
+  }
+
+
   void main () {
     vec2 p = ( 2.0 * vUv ) - 1.0;
 
@@ -57,12 +92,15 @@ const frag = `
     vec3 ro = vec3( 0, 1, 0 );
     vec3 rd = normalize(vec3(p.x, p.y, 1.0));
 
-    float d = ray_march(ro, rd);
+    float d = rayMarch(ro, rd);
 
-    d /= 6.0;
     col = vec3(d);
 
+    vec3 i = ro + rd * d;
 
+    float dif = light(i);
+    
+    col = vec3(dif);
 
     gl_FragColor = vec4(col, 1.0);
   }
